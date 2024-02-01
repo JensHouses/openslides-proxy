@@ -44,7 +44,12 @@ else
       jq_write ".apps.http.https_port = 8000"
       jq_write ".apps.http.http_port = 8001"
       jq_write ".apps.http.servers.srv0.routes[-1].match = [{ host: [\"$EXTERNAL_ADDRESS\"]}]"
-
+      ### 2nd ext addr ###
+      if [ -n "$SECOND_EXTERNAL_ADDRESS" ]; then
+        echo "INFO: Zusätzliche externe Adresse wird konfiguriert: $SECOND_EXTERNAL_ADDRESS"
+        jq_write ".apps.http.servers.srv0.routes[-1].match[0].host += [\"$SECOND_EXTERNAL_ADDRESS\"]"
+      fi
+      ### 2nd ext addr end ###
       if [ -n "$ACME_ENDPOINT" ]; then
         jq_write ".apps.tls.automation.policies[0].issuers[0].ca = \"${ACME_ENDPOINT}\""
       fi
